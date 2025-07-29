@@ -10,6 +10,7 @@ export default function QRBtn() {
   const router = useRouter();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [popupRef, setPopupRef] = useState<Window | null>(null);
+  const [isPolling, setIsPolling] = useState(false);
 
   const handleClick = async () => {
     try {
@@ -19,17 +20,22 @@ export default function QRBtn() {
 
       setSessionId(sessionId);
       setPopupRef(popup);
+      setIsPolling(true);
     } catch (error) {
       console.error("QR 생성 실패:", error);
     }
   };
 
-  usePolling(sessionId, () => {
-    if (popupRef && !popupRef.closed) {
-      popupRef.close();
-    }
-    router.push("/success");
-  });
+  usePolling(
+    () => {
+      if (popupRef && !popupRef.closed) {
+        popupRef.close();
+      }
+      router.push("/success");
+    },
+    1000,
+    isPolling
+  );
 
   return (
     <button
