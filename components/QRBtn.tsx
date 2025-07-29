@@ -24,15 +24,11 @@ export default function QRBtn() {
     }
   };
 
-  usePolling(sessionId, (txId, address, amount) => {
+  usePolling(sessionId, () => {
     if (popupRef && !popupRef.closed) {
       popupRef.close();
     }
-    router.push(
-      `/success?txId=${encodeURIComponent(txId)}&address=${encodeURIComponent(
-        address
-      )}&amount=${encodeURIComponent(amount)}`
-    );
+    router.push("/success");
   });
 
   return (

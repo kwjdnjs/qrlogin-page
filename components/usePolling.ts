@@ -3,7 +3,7 @@ import axios from "axios";
 
 export function usePolling(
   sessionId: string | null,
-  onConfirm: (txId: string, address: string, amount: string) => void,
+  onConfirm: () => void,
   intervalMs = 1000
 ) {
   useEffect(() => {
@@ -13,15 +13,11 @@ export function usePolling(
 
     const interval = setInterval(async () => {
       try {
-        const res = await axios.get(`${url}/bitcoinqr/status`, {
-          params: { sessionId },
-        });
+        const res = await axios.get(`${url}/api/qr/status`);
 
-        console.log(`get: ${sessionId}`);
-
-        if (res.data.status === "CONFIRMED") {
+        if (res.data.status === "SUCCESS") {
           clearInterval(interval);
-          onConfirm(res.data.txId, res.data.senderAddress, res.data.amount);
+          onConfirm();
         }
       } catch (err) {
         console.error("Polling error:", err);
