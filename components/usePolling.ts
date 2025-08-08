@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 import axios from "axios";
+import { useAuthStore } from "@/store/authStore";
 
 export function usePolling(
   onConfirm: () => void,
   intervalMs = 1000,
   isActive: boolean
 ) {
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
   useEffect(() => {
     const url = process.env.NEXT_PUBLIC_API_URL;
 
@@ -20,6 +22,7 @@ export function usePolling(
         console.log(res.data.status);
 
         if (res.data.status === "SUCCESS") {
+          setAccessToken(res.headers["access"]);
           clearInterval(interval);
           onConfirm();
         }
